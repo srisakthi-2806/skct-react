@@ -1,3 +1,211 @@
+----------------------Exp-6  Docker Containerization and Docker Volume------------
+
+
+sudo su
+yum install docker
+docker --version
+systemctl start docker
+docker run -it ubuntu bash
+
+ctrl+d--->came out of root
+
+docker volume create my_volume
+docker run -d --name my_nginx -v my_volume:/usr/share/nginx/html -p 80:80 nginx
+docker inspect my_nginx
+
+
+-------------------------Exp-7  Docker Networking and Compose for Multi-Container------------
+
+
+sudo su
+
+yum install docker
+
+sudo systemctl start docker
+
+sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+
+sudo chmod +x /usr/local/bin/docker-compose
+
+docker-compose version
+
+nano docker-compose.yml
+
+
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    networks:
+      - my_network
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: example_password
+      MYSQL_DATABASE: my_database
+      MYSQL_USER: my_user
+      MYSQL_PASSWORD: my_password
+    networks:
+      - my_network
+
+  nodejs:
+    image: node:latest
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
+
+ctrl+o--------enter----------ctrl+x
+
+
+docker-compose up
+
+Ctrl+c
+
+docker ps -a
+
+docker images
+
+
+--------------------------------Exp-8 cloud9  Banking application-----------------------------
+
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class BankTest {
+    private BankAccount account;
+
+    @Before
+    public void setUp() {
+        account = new BankAccount(100); // Initial balance of $100
+    }
+
+    @Test
+    public void testDeposit() {
+        account.deposit(50);
+        assertEquals(150, account.getBalance(), 0);
+    }
+
+    @Test
+    public void testWithdrawSufficientFunds() {
+        account.withdraw(50);
+        assertEquals(50, account.getBalance(), 0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testWithdrawExceedsBalance() {
+        account.withdraw(200);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testWithdrawNegativeAmount() {
+        account.withdraw(-50);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDepositNegativeAmount() {
+        account.deposit(-50);
+    }
+
+    @Test
+    public void testGetBalance() {
+        assertEquals(100, account.getBalance(), 0);
+    }
+   
+    @Test
+    public void testDepositAndWithdraw() {
+        account.deposit(50);
+        account.withdraw(30);
+        assertEquals(120, account.getBalance(), 0);
+    }
+}
+
+class BankAccount {
+    private double balance;
+
+    public BankAccount(double initialBalance) {
+        this.balance = initialBalance;
+    }
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+        } else {
+            throw new IllegalArgumentException("Deposit amount must be positive");
+        }
+    }
+
+    public void withdraw(double amount) {
+        if (amount > 0 && balance >= amount) {
+            balance -= amount;
+        } else {
+            throw new IllegalArgumentException("Invalid withdrawal amount or insufficient funds");
+        }
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+}
+
+mkdir -p src
+
+mkdir -p test
+
+cd test
+
+touch BankTest.java
+
+wget https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar
+
+wget https://repo1.maven.org/maven2/junit/junit/4.13.2/junit-4.13.2.jar
+
+cd ..
+
+mkdir -p out
+
+cd out
+
+touch BankAccount.class
+
+touch BankTest.class
+
+cd ..
+
+
+javac -cp test/junit-4.13.2.jar:test/hamcrest-core-1.3.jar -d out test/BankTest.java
+
+cd out
+
+java -cp .:../test/junit-4.13.2.jar:../test/hamcrest-core-1.3.jar org.junit.runner.JUnitCore BankTest
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*-----------------------------exp-1 Employee Management System-------------------------------------------- */
 
